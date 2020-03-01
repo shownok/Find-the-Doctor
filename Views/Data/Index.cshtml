@@ -1,0 +1,95 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1 class="alert alert-info">Data Index</h1>
+
+<div class="row">
+    <div class="col-md-4">
+
+        <select id="arealist" class="form-control">
+            <option value="0">--Select Area--</option>
+            @foreach (var item in ViewBag.area)
+            {
+                <option value="@item.AreaId">@item.AreaName</option>
+
+            }
+        </select>
+        <br />
+        <br />
+        <select id="specialist" class="form-control">
+            <option value="0">--Select Specialist--</option>
+            @foreach (var p in ViewBag.special)
+            {
+                <option value="@p.SpecialistId">@p.SpecialistType</option>
+
+            }
+        </select>
+        <br />
+        <button id="btnSearch" class="btn btn-success">Search</button>
+        <br />
+        <br/>
+        <select id="doctorlist" class="form-control">
+        </select>
+        <br />
+        <br />
+        <button id="btngo" class="btn btn-success">Show Details</button>
+        <br />
+        <br />
+        <div id="doctorlist1"></div>
+    </div>
+</div>
+
+@section Scripts{ 
+<script>
+    $(document).ready(function () {
+        $("#btnSearch").click(function () {
+            var id1 = $("#arealist option:selected").val();
+            var id2 = $("#specialist option:selected").val();
+
+            $.ajax({
+                url: '/Data/GetDoctor/?id1=' + id1 + '&id2='+ id2,
+                cache: false,
+                dataType: 'JSON',
+                success: function (data) {
+                    console.log(data);
+                    $("#doctorlist").empty();
+                    $.each(data, function (i, obj) {                      
+                        var m = '<option value="' + obj.doctorId + '">' + obj.doctorName + '</option>';
+                        $("#doctorlist").append(m);
+                    });
+                },
+                error: function (err) {
+                     console.log(err);
+                },
+            });
+        });
+    
+        $("#btngo").click(function () {
+            //var id1 = $("#arealist option:selected").val();
+            //var id2 = $("#specialist option:selected").val();
+            var id3 = $("#doctorlist option:selected").val();
+
+            $.ajax({
+                url: '/Data/GetDoctor2/?id3=' + id3,
+                cache: false,
+                dataType: 'JSON',
+                success: function (data) {
+                     console.log(data);
+                    $("#doctorlist1").empty();
+                    $.each(data, function (i, obj) {
+                        var m ='Doctor Name: '+ obj.doctorName+'<br/>' + 'Contact NO: '+ obj.phoneNo+'<br/>'+ 'Hospital: '+obj.hospitalName+'<br/>'+ 'Schedule: '+ obj.schedule; ;
+                        $("#doctorlist1").append(m);
+                    });
+                },
+                error: function (err) {
+                     console.log(err);
+                },
+            });
+        });
+        
+        
+    });
+</script>
+}
